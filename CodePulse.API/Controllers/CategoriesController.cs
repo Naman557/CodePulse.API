@@ -60,5 +60,51 @@ namespace CodePulse.API.Controllers
             return Ok(response);
         }
 
+        // GET: api/categories/{id}
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetCategoryById([FromRoute] Guid id)
+        {
+            var category = await _categoryRepository.GetById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            var response = new CategoryDto
+            {
+                ID = category.ID,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
+            return Ok(response);
+        }
+
+        //PUT: api/categories/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> EditCategory([FromRoute] Guid id,UpdateCategoryRequestDto request)
+        {
+            var category = new Category
+            {
+                ID = id,
+                Name = request.Name,
+                UrlHandle = request.UrlHandle
+            };
+            category = await _categoryRepository.UpdateAsync(category);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            var response = new CategoryDto
+            {
+                ID = category.ID,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
+            return Ok(response);    
+        }
+
     }
 }
